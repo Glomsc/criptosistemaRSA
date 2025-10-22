@@ -38,11 +38,8 @@ def criptografar_endpoint():
         textoBase = rsa.criptografar(texto, e, n)
 
         return jsonify({
-            "p": p,
-            "q": q,
-            "n": n,
-            "e": e,
-            "d": d,
+            "Chave-pública": f"{e}-{n}",
+            "Chave-privada": f"{d}-{n}",
             "texto_criptografado": textoBase
         })
 

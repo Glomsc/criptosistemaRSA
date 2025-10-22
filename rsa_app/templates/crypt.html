@@ -43,6 +43,7 @@
 
       const dados = await resposta.json();
       const resultado = document.getElementById('resultado');
+      resultado.innerHTML = '';
 
       if (dados.erro) {
         resultado.innerHTML = `<p class="text-red-600 font-semibold">Erro: ${dados.erro}</p>`;
@@ -60,6 +61,18 @@
           </div>
         `;
       }
+      
+      if (dados["Chave-privada"]) {
+        const [d, n] = dados["Chave-privada"].split("-");
+        localStorage.setItem("d", d);
+        localStorage.setItem("n", n);
+        console.log("Chaves salvas:", { d, n });
+      }
+      resultado.innerHTML += `
+        <a href="/decifrar" class="block mt-4 text-blue-600 hover:underline">
+          Ir para o módulo de decifração
+        </a>
+      `;
     });
   </script>
 </body>

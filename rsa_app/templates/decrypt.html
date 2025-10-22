@@ -29,6 +29,16 @@
   </div>
 
   <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const d = localStorage.getItem("d");
+      const n = localStorage.getItem("n");
+      if (d && n) {
+        document.getElementById('d').value = d;
+        document.getElementById('n').value = n;
+        console.log("Chaves carregadas:", { d, n });
+      }
+    });
+
     document.getElementById('formDecifrar').addEventListener('submit', async (e) => {
       e.preventDefault();
       const texto_criptografado = document.getElementById('texto_criptografado').value;
