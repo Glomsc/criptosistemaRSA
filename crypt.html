@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Criptografar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col items-center py-16">
+  <div class="w-full max-w-lg bg-white p-8 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-semibold mb-6 text-gray-800">Criptografar Texto</h2>
+    <form id="formCripto" class="space-y-4">
+      <div>
+        <label class="block mb-1 font-medium text-gray-700">Texto claro:</label>
+        <textarea id="texto" rows="3" class="w-full p-2 border rounded-md"></textarea>
+      </div>
+      <div>
+        <label class="block mb-1 font-medium text-gray-700">Primo p (opcional):</label>
+        <input type="number" id="p" class="w-full p-2 border rounded-md">
+      </div>
+      <div>
+        <label class="block mb-1 font-medium text-gray-700">Primo q (opcional):</label>
+        <input type="number" id="q" class="w-full p-2 border rounded-md">
+      </div>
+      <button type="submit" class="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Criptografar</button>
+    </form>
+
+    <div id="resultado" class="mt-6 space-y-2"></div>
+    <a href="/" class="mt-4 inline-block text-blue-600 hover:underline"> Retornar ao Menu</a>
+  </div>
+
+  <script>
+    document.getElementById('formCripto').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const texto = document.getElementById('texto').value;
+      const p = document.getElementById('p').value;
+      const q = document.getElementById('q').value;
+
+      const resposta = await fetch('/api/crypt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texto, p, q })
+      });
+
+      const dados = await resposta.json();
+      const resultado = document.getElementById('resultado');
+      resultado.innerHTML = '';
+
+      if (dados.erro) {
+        resultado.innerHTML = `<p class="text-red-600 font-semibold">Erro: ${dados.erro}</p>`;
+        return;
+      }
+
+      for (const [chave, valor] of Object.entries(dados)) {
+        let display = Array.isArray(valor) ? valor.join(' ') : valor;
+        resultado.innerHTML += `
+          <div class="bg-white p-2 rounded-md border shadow-sm">
+            <span class="font-semibold text-gray-700">${chave}:</span>
+            <span class="ml-2 text-gray-900 break-all">${display}</span>
+          </div>
+        `;
+      }
+      
+      if (dados["Chave-privada"]) {
+        const [d, n] = dados["Chave-privada"].split("-");
+        localStorage.setItem("d", d);
+        localStorage.setItem("n", n);
+        console.log("Chaves salvas:", { d, n });
+      }
+      resultado.innerHTML += `
+        <a href="/decifrar" class="block mt-4 text-blue-600 hover:underline">
+          Ir para o módulo de decifração
+        </a>
+      `;
+    });
+  </script>
+</body>
+</html>
